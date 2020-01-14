@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 41db163d2fb894bca924153e706d7ff3
+  - enabled: 1
+    path: Assets/Scenes/MenuUtama.unity
+    guid: e49114d514cd3424dace89f0d1525d83
+  - enabled: 1
+    path: Assets/Scenes/Profil.unity
+    guid: b013af6bd1ff04a1a91c31adab4d02e7
+  - enabled: 1
+    path: Assets/Scenes/pilihQuiz.unity
+    guid: 3d7a3b394a9564049a2d3eb2b7339f34
+  - enabled: 1
+    path: Assets/Scenes/Quiz1.unity
+    guid: fd91e9b5f3cc749a78cc67250de54997
+  - enabled: 1
+    path: Assets/Scenes/Quiz2.unity
+    guid: 43d40d27339aa4d72a9b98ae4c3d1bee
+  - enabled: 1
+    path: Assets/Scenes/Quiz3.unity
+    guid: 2150ac80b6103482592b16aaed4e3a77
+  - enabled: 1
+    path: Assets/Scenes/Quiz4.unity
+    guid: 0f2a40018bbdd49b0a4abd9ad1e05e98
+  m_configObjects: {}
