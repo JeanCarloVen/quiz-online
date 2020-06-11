@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using SimpleJSON;
 
 public class SoalManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+
     int nomerSoal =0;
+    API api = new API();
+
     [System.Serializable]
     public class SoalList
     {
@@ -16,12 +19,11 @@ public class SoalManager : MonoBehaviour
         [TextArea(6,10)]
         [Header("Soal")]
         public string soal;
-
-        [Header("Kunci Jawaban")]
-        public bool A;
-        public bool B, C, D;
         [Header("Array Jawaban")]
-        public string jawabanBenar;
+        public string jawaban;
+
+        //[Header("Array Jawaban")]
+        public Image pilihSoal;
 
     }
     [System.Serializable]
@@ -39,7 +41,7 @@ public class SoalManager : MonoBehaviour
     public GameObject popup , pilihMap, backPanel;
     string[] jawaban;
     public List<pilihan> jawab;
-    string buatId = Data._nim+""+pilihQuiz.quiz;
+    //string buatId = Data._nim+""+pilihQuiz.quiz;
     private float startTime = 7200f , currentTime = 0f;
     
 
@@ -59,6 +61,7 @@ public class SoalManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        StartCoroutine(liatSoal());
         screenShot=ScreenShot.ss *20;
         hasil=benar*5-screenShot;
         if(Input.GetKey(KeyCode.Print)){
@@ -85,6 +88,17 @@ public class SoalManager : MonoBehaviour
         
         }
 
+        for(int i = 0; i < 20; i++)
+        {
+            //exam[nomerSoal].pilihSoal = GameObject.Find(""+i + 1).GetComponent<Image>();
+            if (jawab[nomerSoal]._pilih == "")
+            {   
+                exam[nomerSoal].pilihSoal.color = Color.red; 
+            }else
+            {
+                exam[nomerSoal].pilihSoal.color = Color.green;
+            }
+        }
         
         if(hasil < 0){
             _hasil.text = "Result :0";
@@ -139,11 +153,7 @@ public class SoalManager : MonoBehaviour
             buttonD.interactable = true;
         }
      }
-    void OnGUI()
-    {
-     
-           // Do stuff.
-    }
+
 
     public void pilihNomer(int nomer){
         nomer-=1;
@@ -163,7 +173,7 @@ public class SoalManager : MonoBehaviour
     }
     public void back(){
         SceneManager.LoadScene("MenuUtama");
-        StartCoroutine(tambahData(buatId , Data._nim , pilihQuiz.quiz , hasil));
+        StartCoroutine(tambahData(Data._nim , hasil.ToString()));
     }
 
     public void finish(){
@@ -178,38 +188,24 @@ public class SoalManager : MonoBehaviour
     public void cekJawaban(){
         popup.SetActive(false);
         animator.SetBool("hasil",true);
-        
-            if(jawab[0]._pilih == exam[0].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[1]._pilih == exam[1].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[2]._pilih == exam[2].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[3]._pilih == exam[3].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[4]._pilih == exam[4].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[5]._pilih == exam[5].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[6]._pilih == exam[6].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[7]._pilih == exam[7].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[8]._pilih == exam[8].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[9]._pilih == exam[9].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[10]._pilih == exam[10].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[11]._pilih == exam[11].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[12]._pilih == exam[12].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[13]._pilih == exam[13].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[14]._pilih == exam[14].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[15]._pilih == exam[15].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[16]._pilih == exam[16].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[17]._pilih == exam[17].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[18]._pilih == exam[18].jawabanBenar){benar+=1;}else{salah+=1;}
-            if(jawab[19]._pilih == exam[19].jawabanBenar){benar+=1;}else{salah+=1;}
+
+
+    for(int j = 0; j < 20; j++)
+        {
+            if(jawab[j]._pilih == exam[j].jawaban)
+            {
+                benar += 1;
+            }
+            else
+            {
+                salah += 1;
+            }
+        }
     }
 
     public void pilihJawaban(string pilih){
         jawab[nomerSoal]._pilih = pilih;
 
-        
-        // if(exam[0].jawabanBenar == jawab[0]._pilih){
-        //     hasil +=10;
-        // }else{
-        //     hasil-=5;
-        // }
     }
 
     public void next(){
@@ -235,21 +231,18 @@ public class SoalManager : MonoBehaviour
     }
 
 
-    IEnumerator tambahData(string id, string nim , string info , int hasilQuiz)
+    IEnumerator tambahData(string NIS, string n_quiz1)
     {
         
         WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        form.AddField("nim", nim);
-        form.AddField("info", info);
-        form.AddField("hasilQuiz",hasilQuiz);
+        form.AddField("NIS", NIS);
+        form.AddField("n_quiz1", n_quiz1);
+        
     
 
-        using (UnityWebRequest www = UnityWebRequest.Post("http://192.168.42.199/sinsen/tambahData.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post(api.updateNilai1, form))
         {
-            // string data = JsonUtility.FromJson(www);
-            //int value = 1;
-            
+
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError)
@@ -258,7 +251,50 @@ public class SoalManager : MonoBehaviour
             }
             else
             {
-                
+                string jsonArray = www.downloadHandler.text;
+
+                JSONArray jsonArrayString = JSON.Parse(jsonArray) as JSONArray;
+                JSONObject profilInfo = new JSONObject();
+                profilInfo = jsonArrayString[0].AsObject;
+                profilInfo["n_quiz1"] = n_quiz1;
+                string test = profilInfo["n_quiz1"];
+                Debug.Log(test);
+
+            }
+        }
+    }
+
+
+
+    IEnumerator liatSoal()
+    {
+        WWWForm form = new WWWForm();
+        //form.AddField("nim", nim);
+        using (UnityWebRequest www = UnityWebRequest.Get(api.listSoal))
+        {
+            yield return www.SendWebRequest();
+            if (www.isNetworkError || www.isHttpError)
+            {
+
+            }
+            else
+            {
+
+                string jsonArray = www.downloadHandler.text;
+
+                JSONArray jsonArrayString = JSON.Parse(jsonArray) as JSONArray;
+                JSONObject profilInfo = new JSONObject();
+
+
+
+                for (int i = 0; i < 20; i++)
+                {
+                    profilInfo = jsonArrayString[i].AsObject;
+                    exam[i].soal = profilInfo["soal"];
+                    exam[i].jawaban = profilInfo["jawaban"];
+                    //exam[i].quiz = profilInfo["quiz"];
+                }
+
             }
         }
     }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+
 using UnityEngine.SceneManagement;
 
 public class Login : MonoBehaviour
@@ -13,19 +17,27 @@ public class Login : MonoBehaviour
     public InputField passwordField;
     public InputField usernameField;
     public Text infoLogin;
-    public GameObject popup;
-    string url = "http://192.168.42.199/sinsen/login.php";
+
+    API api = new API();
+    
     void Start()
     {
         anim.SetBool("login",false);
-        popup.SetActive(false);
+        //popup.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //network = GameObject.Find("ConnectionNetwork").GetComponent<NetworkManager>();
+        //string ip = network.networkAddress;
+        //string ip = nc.address;
+        //Debug.Log(ip);
+
+
     }
+    
+
 
     public void _loginAwal(){
         anim.SetBool("login",true);
@@ -40,16 +52,16 @@ public class Login : MonoBehaviour
 
 
 
-    IEnumerator login(string nim , string password)
+    IEnumerator login(string NIS , string password)
     {
         WWWForm form = new WWWForm();
-        form.AddField("nim", nim);
-        form.AddField("password", password);
+        form.AddField("NIS", NIS);
+        form.AddField("pass", password);
         // profilData.setNim(nim);
         // profilData.setPassword(password);
     //    dataProfil.nimProfil = nim;
 
-        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        using (UnityWebRequest www = UnityWebRequest.Post(api.Login , form))
         {
             // string data = JsonUtility.FromJson(www);
             //int value = 1;
@@ -63,33 +75,35 @@ public class Login : MonoBehaviour
             else
             {
                 string json = www.downloadHandler.text;
-                
+                Debug.Log(json);
                 if(json == "berhasil"){
                     Debug.Log("berhasil");
+                    infoLogin.color = Color.green;
                     infoLogin.text = "Berhasil Login";
                     SceneManager.LoadScene("MenuUtama");
                     Data.getInstance().setNim(usernameField.text);
                     Data._nim = usernameField.text;
 
                 }else if(usernameField.text == ""){
-                    popup.SetActive(true);
+                    //popup.SetActive(true);
                     infoLogin.text = "Masukkan NIM!";
                     Debug.Log("Masukkan NIM!");
                 }else if(passwordField.text == ""){
-                    popup.SetActive(true);
+                    //popup.SetActive(true);
                     infoLogin.text = "Masukkan Password!";
                     Debug.Log("Masukkan Password");
                 }else if(json == "gagal"){
-                     popup.SetActive(true);
+                    //popup.SetActive(true);
+                    infoLogin.fontSize = 100;
                      infoLogin.text = "NIM atau Password anda salah";
-                    Debug.Log("NIM atau Password anda salah");
+
                 }
 
             }
         }
     }
 
-    public void okPop(){
-        popup.SetActive(false);
-    }
+    //public void okPop(){
+    //    popup.SetActive(false);
+    //}
 }
